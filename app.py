@@ -1,5 +1,8 @@
 from flask import Flask, jsonify
-from flask import Flask, render_template
+from flask import Flask, render_template, Response 
+import cv2
+
+camera = cv2.VideoCapture('rtsp://freja.hiof.no:1935/rtplive/definst/hessdalen03.stream')
 
 app = Flask(__name__)
 
@@ -37,6 +40,14 @@ def name():
 @app.route('/hello/<string:name>')
 def Home(name):
     return render_template('home.html',name_html=name)
+
+@app.route('/video')
+def index():
+    return render_template('index.html')
+
+@app.route('/video_feed')
+def video_feed():
+    return Response(gen_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == "__main__":
     app.run(debug=False)
